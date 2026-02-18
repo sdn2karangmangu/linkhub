@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Link Manager — Ujian Online</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #f0f4f8;
+  --white:    #ffffff;
+  --surface:  #f8fafc;
+  --border:   #e2e8f0;
+  --border2:  #cbd5e1;
+  --text:     #0f172a;
+  --sub:      #64748b;
+  --muted:    #94a3b8;
+
+  --blue:     #2563eb;
+  --blue-lt:  #eff6ff;
+  --blue-bd:  #bfdbfe;
+  --green:    #16a34a;
+  --green-lt: #f0fdf4;
+  --green-bd: #bbf7d0;
+  --orange:   #ea580c;
+  --orange-lt:#fff7ed;
+  --orange-bd:#fed7aa;
+  --purple:   #7c3aed;
+  --purple-lt:#faf5ff;
+  --purple-bd:#ddd6fe;
+  --red:      #dc2626;
+  --red-lt:   #fef2f2;
+  --teal:     #0d9488;
+  --teal-lt:  #f0fdfa;
+  --teal-bd:  #99f6e4;
+  --pink:     #db2777;
+  --pink-lt:  #fdf2f8;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+  --shadow:    0 4px 16px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.04);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.12), 0 4px 16px rgba(0,0,0,.06);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  color: var(--text);
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 8px 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.logo-icon {
+  width: 38px; height: 38px;
+  background: var(--blue);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 2px 8px rgba(37,99,235,.3);
+}
+
+.logo-text {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.logo-text span { color: var(--blue); }
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .18s;
+  border: none;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--blue);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(37,99,235,.25);
+}
+.btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(37,99,235,.35); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--sub);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { background: var(--surface); border-color: var(--border2); color: var(--text); }
+
+.btn-danger {
+  background: var(--red-lt);
+  color: var(--red);
+  border: 1px solid #fecaca;
+}
+.btn-danger:hover { background: #fee2e2; }
+
+/* ── MAIN ── */
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* ── SEARCH + FILTER BAR ── */
+.controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 15px;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .18s, box-shadow .18s;
+  box-shadow: var(--shadow-sm);
+}
+.search-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+.search-input::placeholder { color: var(--muted); }
+
+.cat-filter {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cat-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--white);
+  color: var(--sub);
+  transition: all .15s;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+}
+.cat-btn:hover { border-color: var(--border2); color: var(--text); }
+.cat-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); box-shadow: 0 2px 8px rgba(37,99,235,.25); }
+
+/* ── STATS BAR ── */
+.stats-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.stat-chip {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow-sm);
+  flex: 1;
+  min-width: 120px;
+  animation: fadeUp .4s ease both;
+}
+
+.stat-chip-icon {
+  font-size: 20px;
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.stat-chip-val {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.stat-chip-lbl {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+/* ── SECTION HEADER ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sub);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.section-count {
+  font-size: 11px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* ── LINK GRID ── */
+.link-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+  margin-bottom: 36px;
+}
+
+/* ── LINK CARD ── */
+.link-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  position: relative;
+  transition: all .2s;
+  box-shadow: var(--shadow-sm);
+  animation: fadeUp .35s ease both;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.link-card:hover {
+  box-shadow: var(--shadow);
+  border-color: var(--border2);
+  transform: translateY(-2px);
+}
+
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.card-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.card-info { flex: 1; min-width: 0; }
+
+.card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-desc {
+  font-size: 12px;
+  color: var(--sub);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-cat-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ── URL BOX ── */
+.url-box {
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  gap: 0;
+}
+
+.url-text {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--sub);
+  padding: 8px 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: text;
+  user-select: all;
+}
+
+.url-actions {
+  display: flex;
+  border-left: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.url-btn {
+  background: none;
+  border: none;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--muted);
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.url-btn:hover { background: var(--bg); color: var(--blue); }
+.url-btn + .url-btn { border-left: 1px solid var(--border); }
+
+.url-btn .tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 5px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s;
+  letter-spacing: 0.03em;
+}
+.url-btn:hover .tooltip { opacity: 1; }
+
+/* ── CARD FOOTER ── */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.card-meta {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.card-edit-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.card-edit-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .15s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 500;
+}
+.card-edit-btn:hover { background: var(--surface); color: var(--text); border-color: var(--border2); }
+.card-edit-btn.del:hover { background: var(--red-lt); color: var(--red); border-color: #fecaca; }
+
+/* Copy success flash */
+.url-btn.copied { color: var(--green) !important; }
+.url-btn.copied .tooltip { background: var(--green); }
+
+/* ── MODAL ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,.5);
+  backdrop-filter: blur(4px);
+  z-index: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.overlay.open { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: var(--white);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(24px) scale(.97);
+  transition: transform .25s ease;
+  overflow: hidden;
+}
+.overlay.open .modal { transform: translateY(0) scale(1); }
+
+.modal-header {
+  padding: 24px 28px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.modal-close {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--sub);
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all .15s;
+}
+.modal-close:hover { background: var(--red-lt); color: var(--red); border-color: #fecaca; }
+
+.modal-body { padding: 24px 28px 28px; display: flex; flex-direction: column; gap: 16px; }
+
+.field-group { display: flex; flex-direction: column; gap: 6px; }
+
+.field-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sub);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.field-input {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+.field-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.1); background: var(--white); }
+.field-input::placeholder { color: var(--muted); }
+
+.field-input.mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+.field-select {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  cursor: pointer;
+  transition: border-color .18s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+.field-select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+
+.modal-footer {
+  display: flex;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--muted);
+  display: none;
+}
+.empty-state.show { display: block; }
+.empty-icon { font-size: 52px; margin-bottom: 16px; }
+.empty-title { font-size: 18px; font-weight: 700; color: var(--sub); margin-bottom: 8px; }
+.empty-sub { font-size: 14px; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--text);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 12px 22px;
+  border-radius: 30px;
+  z-index: 9999;
+  opacity: 0;
+  transition: all .3s ease;
+  white-space: nowrap;
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── CATEGORY COLORS ── */
+.cat-apps-script  { background:var(--blue-lt);   color:var(--blue);   border-color:var(--blue-bd); }
+.cat-google-drive { background:var(--green-lt);  color:var(--green);  border-color:var(--green-bd); }
+.cat-web-app      { background:var(--orange-lt); color:var(--orange); border-color:var(--orange-bd); }
+.cat-spreadsheet  { background:var(--teal-lt);   color:var(--teal);   border-color:var(--teal-bd); }
+.cat-lainnya      { background:var(--purple-lt); color:var(--purple); border-color:var(--purple-bd); }
+
+.icon-apps-script  { background:var(--blue-lt);   color:var(--blue); }
+.icon-google-drive { background:var(--green-lt);  color:var(--green); }
+.icon-web-app      { background:var(--orange-lt); color:var(--orange); }
+.icon-spreadsheet  { background:var(--teal-lt);   color:var(--teal); }
+.icon-lainnya      { background:var(--purple-lt); color:var(--purple); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .wrap { padding: 20px 14px; }
+  .link-grid { grid-template-columns: 1fr; }
+  .modal { max-width: 100%; }
+  .modal-body { padding: 20px; }
+  .modal-header { padding: 20px 20px 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">🔗</div>
+      <div>
+        <div class="logo-text">Link<span>Hub</span></div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="exportLinks()">📤 Export</button>
+      <button class="btn btn-ghost" onclick="importLinks()">📥 Import</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImport(event)">
+      <button class="btn btn-primary" onclick="openModal()">＋ Tambah Link</button>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="wrap">
+
+  <!-- STATS -->
+  <div class="stats-bar" id="statsBar"></div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="searchInput" placeholder="Cari judul, URL, atau deskripsi..." oninput="renderAll()">
+    </div>
+    <div class="cat-filter" id="catFilter"></div>
+  </div>
+
+  <!-- LINK SECTIONS -->
+  <div id="mainContent"></div>
+
+  <!-- EMPTY -->
+  <div class="empty-state" id="emptyState">
+    <div class="empty-icon">🔍</div>
+    <div class="empty-title">Tidak ada link ditemukan</div>
+    <div class="empty-sub">Coba ubah kata kunci atau filter kategori</div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Tambah Link</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label">Judul *</label>
+        <input type="text" class="field-input" id="f-title" placeholder="Contoh: Apps Script Ujian">
+      </div>
+      <div class="field-group">
+        <label class="field-label">URL *</label>
+        <input type="text" class="field-input mono" id="f-url" placeholder="https://...">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Deskripsi</label>
+        <input type="text" class="field-input" id="f-desc" placeholder="Keterangan singkat (opsional)">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Kategori</label>
+        <select class="field-select" id="f-cat">
+          <option value="Apps Script">📜 Apps Script</option>
+          <option value="Google Drive">📁 Google Drive</option>
+          <option value="Web App">🌐 Web App</option>
+          <option value="Spreadsheet">📊 Spreadsheet</option>
+          <option value="Lainnya">🔗 Lainnya</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Ikon (emoji)</label>
+        <input type="text" class="field-input" id="f-icon" placeholder="📜" maxlength="4" style="font-size:22px;text-align:center;letter-spacing:.1em">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal()" style="flex:1">Batal</button>
+        <button class="btn btn-primary" onclick="saveLink()" style="flex:2" id="saveBtn">Simpan Link</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DEFAULT DATA ──────────────────────────────────────────────────
+var DEFAULT_LINKS = [
+  {
+    id: 1,
+    title: "Apps Script — Database Ujian",
+    url: "https://script.google.com/home",
+    desc: "Panel Google Apps Script untuk mengelola Web App",
+    cat: "Apps Script",
+    icon: "📜",
+    pinned: true
+  },
+  {
+    id: 2,
+    title: "Spreadsheet — Hasil Ujian",
+    url: "https://docs.google.com/spreadsheets",
+    desc: "Database Google Sheets tempat hasil ujian tersimpan",
+    cat: "Spreadsheet",
+    icon: "📊",
+    pinned: true
+  },
+  {
+    id: 3,
+    title: "Web App — Ujian Online",
+    url: "https://sites.google.com",
+    desc: "Halaman aplikasi ujian yang diakses siswa",
+    cat: "Web App",
+    icon: "🌐",
+    pinned: false
+  },
+  {
+    id: 4,
+    title: "Dashboard Monitoring",
+    url: "dashboard.html",
+    desc: "Dashboard real-time pemantauan hasil ujian",
+    cat: "Web App",
+    icon: "📡",
+    pinned: false
+  },
+  {
+    id: 5,
+    title: "Google Drive — Folder Ujian",
+    url: "https://drive.google.com",
+    desc: "Folder penyimpanan file soal dan dokumen ujian",
+    cat: "Google Drive",
+    icon: "📁",
+    pinned: false
+  }
+];
+
+// ── STATE ─────────────────────────────────────────────────────────
+var links = [];
+var editId = null;
+var nextId = 100;
+var activeFilter = 'Semua';
+
+var CAT_META = {
+  'Apps Script':  { icon:'📜', cls:'cat-apps-script',  icoCls:'icon-apps-script'  },
+  'Google Drive': { icon:'📁', cls:'cat-google-drive', icoCls:'icon-google-drive' },
+  'Web App':      { icon:'🌐', cls:'cat-web-app',      icoCls:'icon-web-app'      },
+  'Spreadsheet':  { icon:'📊', cls:'cat-spreadsheet',  icoCls:'icon-spreadsheet'  },
+  'Lainnya':      { icon:'🔗', cls:'cat-lainnya',      icoCls:'icon-lainnya'      },
+};
+
+// ── INIT ──────────────────────────────────────────────────────────
+(function init() {
+  try {
+    var saved = localStorage.getItem('linkhub_data');
+    if (saved) {
+      var parsed = JSON.parse(saved);
+      links = parsed.links || DEFAULT_LINKS;
+      nextId = parsed.nextId || 100;
+    } else {
+      links = DEFAULT_LINKS;
+    }
+  } catch(e) { links = DEFAULT_LINKS; }
+  renderAll();
+})();
+
+function save() {
+  try { localStorage.setItem('linkhub_data', JSON.stringify({ links: links, nextId: nextId })); } catch(e) {}
+}
+
+// ── RENDER ────────────────────────────────────────────────────────
+function renderAll() {
+  renderStats();
+  renderCatFilter();
+  renderContent();
+}
+
+function renderStats() {
+  var total = links.length;
+  var cats  = Object.keys(CAT_META);
+  var html  = '';
+
+  var statData = [
+    { icon:'🔗', val: total,                                    lbl:'Total Link',   bg:'#eff6ff', co:'#2563eb' },
+    { icon:'📌', val: links.filter(function(l){return l.pinned;}).length, lbl:'Disematkan',  bg:'#fff7ed', co:'#ea580c' },
+    { icon:'📂', val: cats.filter(function(c){ return links.some(function(l){return l.cat===c;})}).length, lbl:'Kategori',    bg:'#f0fdf4', co:'#16a34a' },
+  ];
+
+  statData.forEach(function(s, i) {
+    html += '<div class="stat-chip" style="animation-delay:' + (i*.07) + 's">' +
+      '<div class="stat-chip-icon" style="background:' + s.bg + ';color:' + s.co + '">' + s.icon + '</div>' +
+      '<div><div class="stat-chip-val">' + s.val + '</div><div class="stat-chip-lbl">' + s.lbl + '</div></div>' +
+      '</div>';
+  });
+  document.getElementById('statsBar').innerHTML = html;
+}
+
+function renderCatFilter() {
+  var cats = ['Semua'];
+  Object.keys(CAT_META).forEach(function(c) {
+    if (links.some(function(l){ return l.cat === c; })) cats.push(c);
+  });
+
+  var html = '';
+  cats.forEach(function(c) {
+    var meta = CAT_META[c] || {};
+    var icon = c === 'Semua' ? '🔗 ' : (meta.icon + ' ');
+    html += '<button class="cat-btn' + (activeFilter===c?' active':'') + '" onclick="setFilter(\'' + c + '\')">' + icon + c + '</button>';
+  });
+  document.getElementById('catFilter').innerHTML = html;
+}
+
+function setFilter(cat) {
+  activeFilter = cat;
+  renderAll();
+}
+
+function renderContent() {
+  var q = document.getElementById('searchInput').value.toLowerCase().trim();
+
+  var filtered = links.filter(function(l) {
+    var matchQ = !q || l.title.toLowerCase().includes(q) || l.url.toLowerCase().includes(q) || (l.desc||'').toLowerCase().includes(q);
+    var matchC = activeFilter === 'Semua' || l.cat === activeFilter;
+    return matchQ && matchC;
+  });
+
+  var empty = document.getElementById('emptyState');
+  if (!filtered.length) {
+    document.getElementById('mainContent').innerHTML = '';
+    empty.classList.add('show');
+    return;
+  }
+  empty.classList.remove('show');
+
+  // Group: pinned first, then by category
+  var pinned = filtered.filter(function(l){ return l.pinned; });
+  var rest   = filtered.filter(function(l){ return !l.pinned; });
+
+  var html = '';
+
+  if (pinned.length) {
+    html += renderSection('📌 Disematkan', pinned, 'pinned');
+  }
+
+  // Group rest by category
+  var grouped = {};
+  rest.forEach(function(l) {
+    if (!grouped[l.cat]) grouped[l.cat] = [];
+    grouped[l.cat].push(l);
+  });
+
+  Object.keys(grouped).forEach(function(cat) {
+    var meta = CAT_META[cat] || { icon: '🔗' };
+    html += renderSection(meta.icon + ' ' + cat, grouped[cat], cat);
+  });
+
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function renderSection(title, items, key) {
+  var cards = items.map(function(l, i) { return renderCard(l, i); }).join('');
+  return '<div class="section-header">' +
+    '<span class="section-title">' + title + '</span>' +
+    '<span class="section-count">' + items.length + ' link</span>' +
+    '</div>' +
+    '<div class="link-grid" id="grid-' + key + '">' + cards + '</div>';
+}
+
+function renderCard(l, idx) {
+  var meta    = CAT_META[l.cat] || CAT_META['Lainnya'];
+  var catCls  = meta.cls;
+  var icoCls  = meta.icoCls;
+  var delay   = (idx * 0.05) + 's';
+  var shortUrl = l.url.replace(/^https?:\/\//, '').slice(0, 52) + (l.url.replace(/^https?:\/\//,'').length > 52 ? '…' : '');
+
+  return '<div class="link-card" id="card-' + l.id + '" style="animation-delay:' + delay + '">' +
+    '<div class="card-top">' +
+      '<div class="card-icon ' + icoCls + '">' + (l.icon || meta.icon) + '</div>' +
+      '<div class="card-info">' +
+        '<div class="card-title">' + esc(l.title) + '</div>' +
+        '<div class="card-desc">' + esc(l.desc || 'Tidak ada deskripsi') + '</div>' +
+      '</div>' +
+      '<span class="card-cat-badge ' + catCls + '">' + esc(l.cat) + '</span>' +
+    '</div>' +
+    '<div class="url-box">' +
+      '<div class="url-text" title="' + esc(l.url) + '">' + esc(shortUrl) + '</div>' +
+      '<div class="url-actions">' +
+        '<button class="url-btn" onclick="copyUrl(' + l.id + ', this)" title="Salin URL">' +
+          '<span>📋</span><span class="tooltip">Salin URL</span>' +
+        '</button>' +
+        '<button class="url-btn" onclick="openUrl(' + l.id + ')" title="Buka di tab baru">' +
+          '<span>↗</span><span class="tooltip">Buka Tab</span>' +
+        '</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="card-footer">' +
+      '<span class="card-meta">' + (l.pinned ? '📌 Disematkan · ' : '') + new Date().toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) + '</span>' +
+      '<div class="card-edit-btns">' +
+        '<button class="card-edit-btn" onclick="togglePin(' + l.id + ')">' + (l.pinned ? 'Lepas Pin' : '📌 Pin') + '</button>' +
+        '<button class="card-edit-btn" onclick="editLink(' + l.id + ')">✏️ Edit</button>' +
+        '<button class="card-edit-btn del" onclick="deleteLink(' + l.id + ')">🗑</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function esc(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────────
+function copyUrl(id, btn) {
+  var l = links.find(function(x){ return x.id===id; });
+  if (!l) return;
+  navigator.clipboard.writeText(l.url).then(function() {
+    btn.classList.add('copied');
+    btn.querySelector('span').textContent = '✅';
+    showToast('✅ URL disalin: ' + l.title);
+    setTimeout(function() {
+      btn.classList.remove('copied');
+      btn.querySelector('span').textContent = '📋';
+    }, 2000);
+  }).catch(function() {
+    // fallback
+    var ta = document.createElement('textarea');
+    ta.value = l.url;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('✅ URL disalin: ' + l.title);
+  });
+}
+
+function openUrl(id) {
+  var l = links.find(function(x){ return x.id===id; });
+  if (l) window.open(l.url, '_blank');
+}
+
+function togglePin(id) {
+  var l = links.find(function(x){ return x.id===id; });
+  if (!l) return;
+  l.pinned = !l.pinned;
+  save();
+  renderAll();
+  showToast(l.pinned ? '📌 Link disematkan' : 'Link dilepas dari pin');
+}
+
+function deleteLink(id) {
+  if (!confirm('Hapus link ini?')) return;
+  links = links.filter(function(x){ return x.id!==id; });
+  save();
+  renderAll();
+  showToast('🗑 Link dihapus');
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────
+function openModal(id) {
+  editId = id || null;
+  document.getElementById('modalTitle').textContent = editId ? 'Edit Link' : 'Tambah Link';
+  document.getElementById('saveBtn').textContent = editId ? 'Simpan Perubahan' : 'Simpan Link';
+
+  if (editId) {
+    var l = links.find(function(x){ return x.id===editId; });
+    if (l) {
+      document.getElementById('f-title').value = l.title;
+      document.getElementById('f-url').value   = l.url;
+      document.getElementById('f-desc').value  = l.desc || '';
+      document.getElementById('f-cat').value   = l.cat;
+      document.getElementById('f-icon').value  = l.icon || '';
+    }
+  } else {
+    document.getElementById('f-title').value = '';
+    document.getElementById('f-url').value   = '';
+    document.getElementById('f-desc').value  = '';
+    document.getElementById('f-cat').value   = 'Apps Script';
+    document.getElementById('f-icon').value  = '';
+  }
+
+  document.getElementById('overlay').classList.add('open');
+  setTimeout(function(){ document.getElementById('f-title').focus(); }, 200);
+}
+
+function editLink(id) { openModal(id); }
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+  editId = null;
+}
+
+document.getElementById('overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+function saveLink() {
+  var title = document.getElementById('f-title').value.trim();
+  var url   = document.getElementById('f-url').value.trim();
+  var desc  = document.getElementById('f-desc').value.trim();
+  var cat   = document.getElementById('f-cat').value;
+  var icon  = document.getElementById('f-icon').value.trim();
+
+  if (!title) { showToast('⚠️ Judul wajib diisi!'); document.getElementById('f-title').focus(); return; }
+  if (!url)   { showToast('⚠️ URL wajib diisi!');   document.getElementById('f-url').focus();   return; }
+
+  // Auto-prefix https if missing
+  if (url && !url.startsWith('http') && !url.endsWith('.html') && !url.startsWith('/')) {
+    url = 'https://' + url;
+  }
+
+  if (editId) {
+    var l = links.find(function(x){ return x.id===editId; });
+    if (l) { l.title=title; l.url=url; l.desc=desc; l.cat=cat; l.icon=icon||CAT_META[cat].icon; }
+  } else {
+    var meta = CAT_META[cat] || CAT_META['Lainnya'];
+    links.push({ id: nextId++, title:title, url:url, desc:desc, cat:cat, icon:icon||meta.icon, pinned:false });
+  }
+
+  save();
+  closeModal();
+  renderAll();
+  showToast(editId ? '✅ Link diperbarui!' : '✅ Link berhasil ditambahkan!');
+}
+
+// ── EXPORT / IMPORT ───────────────────────────────────────────────
+function exportLinks() {
+  var data = JSON.stringify({ links:links, nextId:nextId, exported: new Date().toISOString() }, null, 2);
+  var blob = new Blob([data], { type:'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'linkhub_backup_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  showToast('📤 Data berhasil diexport!');
+}
+
+function importLinks() { document.getElementById('importFile').click(); }
+
+function handleImport(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var data = JSON.parse(ev.target.result);
+      if (data.links && Array.isArray(data.links)) {
+        if (confirm('Import ' + data.links.length + ' link? Data lama akan DIGABUNG (bukan diganti).')) {
+          data.links.forEach(function(l) {
+            if (!links.some(function(x){ return x.url === l.url; })) {
+              l.id = nextId++;
+              links.push(l);
+            }
+          });
+          save();
+          renderAll();
+          showToast('📥 ' + data.links.length + ' link berhasil diimport!');
+        }
+      } else {
+        showToast('❌ Format file tidak valid');
+      }
+    } catch(err) {
+      showToast('❌ Gagal membaca file: ' + err.message);
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────
+var toastTimer;
+function showToast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2800);
+}
+
+// ── AUTO-FILL ICON FROM CAT ───────────────────────────────────────
+document.getElementById('f-cat').addEventListener('change', function() {
+  var icon = document.getElementById('f-icon').value.trim();
+  if (!icon) {
+    var meta = CAT_META[this.value];
+    if (meta) document.getElementById('f-icon').value = meta.icon;
+  }
+});
+</script>
+</body>
+</html>
