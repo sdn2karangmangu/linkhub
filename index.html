@@ -1,1 +1,438 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Database Proyek</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f1eb;--sur:#fff;--sur2:#f9f7f3;--bor:#e2ddd5;--acc:#2d6a4f;--txt:#1a1a16;--mut:#7a7567;--red:#c0392b;--grn:#27ae60;--yel:#e67e22;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--txt);font-family:'DM Mono',monospace;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23f4f1eb'/%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23e8e3d9' opacity='0.4'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
+.wrap{max-width:1360px;margin:0 auto;padding:32px 20px;position:relative;z-index:1;}
 
+/* ── SETUP ── */
+.setup{display:flex;align-items:center;justify-content:center;min-height:92vh;}
+.scard{background:var(--sur);border:2px solid var(--txt);padding:52px 48px;width:100%;max-width:480px;box-shadow:8px 8px 0 var(--txt);text-align:center;}
+
+.logo-icon{font-size:48px;margin-bottom:16px;}
+.scard h1{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;margin-bottom:8px;}
+.scard h1 em{color:var(--acc);font-style:normal;}
+.scard p{color:var(--mut);font-size:13px;line-height:1.7;margin-bottom:32px;}
+
+.status-row{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--sur2);border:1px solid var(--bor);border-left:4px solid var(--acc);padding:14px 20px;margin-bottom:28px;text-align:left;}
+.status-dot-lg{width:10px;height:10px;border-radius:50%;background:var(--grn);flex-shrink:0;}
+.status-text{font-size:12px;color:var(--mut);line-height:1.5;}
+.status-text strong{color:var(--txt);display:block;margin-bottom:1px;}
+
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;text-align:left;}
+.fg label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--mut);letter-spacing:.08em;text-transform:uppercase;}
+.fg select{background:var(--sur2);border:1px solid var(--bor);color:var(--txt);padding:11px 13px;font-family:inherit;font-size:13px;outline:none;transition:border-color .15s;width:100%;cursor:pointer;}
+.fg select:focus{border-color:var(--acc);}
+
+.cbig{width:100%;padding:15px;background:var(--acc);color:#fff;border:2px solid var(--txt);font-family:'Syne',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;box-shadow:4px 4px 0 var(--txt);display:flex;align-items:center;justify-content:center;gap:8px;}
+.cbig:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--txt);}
+.cbig:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--txt);}
+.cbig:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:4px 4px 0 var(--txt);}
+
+.loading-state{display:none;flex-direction:column;align-items:center;gap:16px;padding:20px 0;}
+.spinner{width:40px;height:40px;border:3px solid var(--bor);border-top-color:var(--acc);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-state p{color:var(--mut);font-size:13px;}
+
+/* ── MAIN APP ── */
+.main{display:none;}
+header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;padding-bottom:18px;border-bottom:2px solid var(--txt);}
+.logo h1{font-family:'Syne',sans-serif;font-size:clamp(18px,3vw,30px);font-weight:800;}
+.logo h1 em{color:var(--acc);font-style:normal;}
+.logo p{color:var(--mut);font-size:12px;margin-top:3px;}
+.tag{display:inline-block;padding:2px 7px;background:#e8f5e9;border:1px solid #a5d6a7;color:var(--grn);font-size:10px;margin-left:6px;}
+.hright{display:flex;gap:7px;align-items:center;flex-wrap:wrap;}
+.chip{display:flex;align-items:center;gap:6px;background:var(--sur);border:1px solid var(--bor);padding:7px 12px;font-size:12px;box-shadow:2px 2px 0 var(--bor);}
+.sdot{width:7px;height:7px;border-radius:50%;}
+.stats-bar{display:flex;gap:7px;flex-wrap:wrap;}
+.sch{display:flex;align-items:center;gap:7px;background:var(--sur);border:1px solid var(--bor);padding:7px 12px;font-size:12px;cursor:pointer;transition:all .15s;box-shadow:2px 2px 0 var(--bor);}
+.sch:hover{border-color:var(--acc);box-shadow:3px 3px 0 var(--acc);}
+.sd{width:7px;height:7px;border-radius:50%;background:var(--grn);}
+.sd.spin{background:var(--yel);animation:bl .7s ease-in-out infinite alternate;}
+.sd.err{background:var(--red);animation:none;}
+@keyframes bl{from{opacity:.3}to{opacity:1}}
+.cdc{font-size:11px;color:var(--mut);padding:4px 10px;background:var(--sur2);border:1px solid var(--bor);display:none;}
+
+.toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center;}
+.sw{flex:1;min-width:150px;position:relative;}
+.sw input{width:100%;background:var(--sur);border:1px solid var(--bor);color:var(--txt);padding:9px 13px 9px 36px;font-family:inherit;font-size:13px;outline:none;transition:border-color .15s;}
+.sw input:focus{border-color:var(--acc);}
+.sw::before{content:'⌕';position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:16px;pointer-events:none;}
+.fsel{background:var(--sur);border:1px solid var(--bor);color:var(--txt);padding:9px 11px;font-family:inherit;font-size:13px;outline:none;cursor:pointer;}
+.btn{padding:9px 13px;border:1px solid var(--bor);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;background:var(--sur);color:var(--mut);transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:5px;}
+.btn:hover{border-color:var(--acc);color:var(--acc);}
+.btn.pri{background:var(--acc);color:#fff;border-color:var(--acc);}
+.btn.pri:hover{background:#225a3f;}
+.btn.dan{border-color:var(--red);color:var(--red);}
+.vt{display:flex;border:1px solid var(--bor);overflow:hidden;background:var(--sur);}
+.vt button{padding:9px 12px;background:transparent;border:none;color:var(--mut);cursor:pointer;font-size:14px;transition:all .15s;}
+.vt button.on{background:var(--txt);color:#fff;}
+
+.tw{background:var(--sur);border:2px solid var(--txt);overflow:hidden;overflow-x:auto;box-shadow:4px 4px 0 var(--bor);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead{background:var(--txt);}
+th{padding:11px 15px;text-align:left;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:var(--bg);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+td{padding:11px 15px;border-bottom:1px solid var(--bor);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--sur2);}
+.nc{color:var(--mut);font-size:11px;}
+.ns{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--txt);display:block;}
+.badge{display:inline-block;padding:2px 9px;font-size:11px;font-weight:600;border:1px solid;}
+.bw{color:#1a5276;border-color:#aed6f1;background:#ebf5fb;}
+.ba{color:#7d2260;border-color:#d7bde2;background:#f5eef8;}
+.bs{color:#1e8449;border-color:#a9dfbf;background:#eafaf1;}
+.bo{color:#784212;border-color:#f0b27a;background:#fef9e7;}
+.sbadge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;font-size:11px;font-weight:700;border:1px solid;}
+.sa{color:var(--grn);background:#eafaf1;border-color:#a9dfbf;}
+.sm{color:var(--yel);background:#fef9e7;border-color:#f0b27a;}
+.sn2{color:var(--red);background:#fdedec;border-color:#f5b7b1;}
+.sdsm{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pu 2s infinite;}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.4}}
+.lb{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;background:var(--sur2);border:1px solid var(--bor);color:var(--mut);text-decoration:none;font-size:13px;transition:all .15s;}
+.lb:hover{border-color:var(--acc);color:var(--acc);background:#e8f5e9;}
+.lb.off{opacity:.2;pointer-events:none;}
+.lc{display:flex;gap:4px;}
+.dc{color:var(--mut);font-size:11px;white-space:nowrap;}
+.kc{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mut);font-size:12px;}
+.empty{text-align:center;padding:52px 20px;color:var(--mut);}
+.empty .ei{font-size:36px;margin-bottom:8px;}
+
+.cg{display:none;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:13px;}
+.pc{background:var(--sur);border:2px solid var(--bor);padding:17px;box-shadow:3px 3px 0 var(--bor);transition:all .15s;}
+.pc:hover{border-color:var(--acc);box-shadow:4px 4px 0 var(--acc);transform:translate(-1px,-1px);}
+.pct{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;}
+.pcno{color:var(--mut);font-size:11px;}
+.pcti{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;margin:7px 0 5px;}
+.pcde{color:var(--mut);font-size:12px;line-height:1.5;margin-bottom:11px;}
+.pcli{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:11px;}
+.pcl{padding:3px 7px;background:var(--sur2);border:1px solid var(--bor);font-size:11px;color:var(--mut);text-decoration:none;transition:all .15s;}
+.pcl:hover{border-color:var(--acc);color:var(--acc);}
+.pcfo{display:flex;justify-content:space-between;align-items:center;padding-top:11px;border-top:1px solid var(--bor);}
+.pcda{font-size:11px;color:var(--mut);margin-top:3px;}
+
+.mb{position:fixed;inset:0;background:rgba(26,26,22,.6);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.mb.on{opacity:1;pointer-events:all;}
+.modal{background:var(--sur);border:2px solid var(--txt);box-shadow:8px 8px 0 var(--txt);width:100%;max-width:420px;max-height:90vh;overflow-y:auto;transform:translateY(14px);transition:transform .2s;}
+.mb.on .modal{transform:translateY(0);}
+.mh{padding:17px 22px 13px;border-bottom:2px solid var(--txt);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--sur);}
+.mh h2{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;}
+.mx{width:26px;height:26px;border:1px solid var(--bor);background:transparent;color:var(--mut);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.mx:hover{border-color:var(--red);color:var(--red);}
+.mbody{padding:17px 22px;}
+.mf{padding:13px 22px;border-top:1px solid var(--bor);display:flex;justify-content:flex-end;gap:9px;position:sticky;bottom:0;background:var(--sur);}
+
+.toast{position:fixed;bottom:20px;right:20px;background:var(--txt);color:var(--bg);padding:11px 16px;font-size:13px;z-index:200;transform:translateY(60px);opacity:0;transition:all .25s;max-width:320px;line-height:1.5;box-shadow:4px 4px 0 var(--mut);}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.err{background:var(--red);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ═══ SETUP SCREEN ═══ -->
+<div class="setup" id="setupScreen">
+  <div class="scard">
+
+    <div class="logo-icon">📊</div>
+    <h1>Project <em>Database</em></h1>
+    <p>Aplikasi manajemen proyek & aplikasi yang terhubung langsung ke Google Sheets Anda.</p>
+
+    <div class="status-row">
+      <span class="status-dot-lg"></span>
+      <div class="status-text">
+        <strong>Koneksi siap</strong>
+        Terhubung ke Google Sheets via Apps Script
+      </div>
+    </div>
+
+    <div class="fg">
+      <label>Auto-refresh setiap</label>
+      <select id="sInt">
+        <option value="0">Manual saja</option>
+        <option value="30" selected>30 detik</option>
+        <option value="60">1 menit</option>
+        <option value="120">2 menit</option>
+        <option value="300">5 menit</option>
+      </select>
+    </div>
+
+    <!-- Loading state -->
+    <div class="loading-state" id="loadingState">
+      <div class="spinner"></div>
+      <p>Menghubungkan ke Google Sheets...</p>
+    </div>
+
+    <button class="cbig" id="conBtn" onclick="connect()">
+      ▶ Mulai Sekarang
+    </button>
+
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
+<div class="main" id="mainApp">
+  <header>
+    <div class="logo">
+      <h1>Project <em>Database</em></h1>
+      <p>// Live sync Google Sheets<span class="tag">Connected</span></p>
+    </div>
+    <div class="hright">
+      <div class="stats-bar" id="statsBar"></div>
+      <div class="sch" onclick="fetchData()" title="Refresh manual">
+        <span class="sd" id="syncDot"></span>
+        <span id="syncLbl">Tersinkron</span>
+      </div>
+      <span class="cdc" id="cdc"></span>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="sw"><input type="text" id="srch" placeholder="Cari nama, jenis, status..." oninput="render()"></div>
+    <select class="fsel" id="fJ" onchange="render()">
+      <option value="">Semua Jenis</option>
+      <option>Web App</option><option>Apps Script</option>
+      <option>Spreadsheet</option><option>Lainnya</option>
+    </select>
+    <select class="fsel" id="fS" onchange="render()">
+      <option value="">Semua Status</option>
+      <option>Aktif</option><option>Maintenance</option><option>Non-aktif</option>
+    </select>
+    <div class="vt">
+      <button id="btnT" class="on" onclick="setView('t')" title="Tabel">☰</button>
+      <button id="btnC" onclick="setView('c')" title="Kartu">⊞</button>
+    </div>
+    <button class="btn" onclick="exportCSV()">↓ Export</button>
+    <button class="btn" onclick="openCfg()">⚙ Setting</button>
+  </div>
+
+  <div id="tv">
+    <div class="tw">
+      <table>
+        <thead><tr>
+          <th>No</th><th>Nama Proyek / Aplikasi</th><th>Jenis</th>
+          <th>Deskripsi</th><th>Sheet</th><th>Web</th><th>Script</th>
+          <th>Status</th><th>Tgl Update</th><th>Keterangan</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="cg" id="cg"></div>
+</div>
+</div>
+
+<!-- SETTING MODAL -->
+<div class="mb" id="cfgM">
+  <div class="modal">
+    <div class="mh"><h2>⚙ Pengaturan</h2><button class="mx" onclick="closeCfg()">✕</button></div>
+    <div class="mbody">
+      <div class="fg">
+        <label>Auto-refresh</label>
+        <select id="cInt" style="background:var(--sur2);border:1px solid var(--bor);color:var(--txt);padding:10px 13px;font-family:inherit;font-size:13px;outline:none;width:100%;cursor:pointer;">
+          <option value="0">Manual saja</option>
+          <option value="30">30 detik</option>
+          <option value="60">1 menit</option>
+          <option value="120">2 menit</option>
+          <option value="300">5 menit</option>
+        </select>
+      </div>
+      <div style="background:var(--sur2);border:1px solid var(--bor);border-left:4px solid var(--acc);padding:12px 14px;font-size:12px;color:var(--mut);line-height:1.6;margin-top:4px;">
+        <strong style="color:var(--txt);display:block;margin-bottom:3px;">Apps Script URL</strong>
+        <span style="font-size:11px;word-break:break-all;color:var(--acc)">script.google.com/macros/s/AKfycb...exec</span>
+      </div>
+      <div class="fg" style="margin-top:16px">
+        <button class="btn dan" onclick="disconnect()">⚠ Reset &amp; Kembali ke Setup</button>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn" onclick="closeCfg()">Batal</button>
+      <button class="btn pri" onclick="saveCfg()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── URL sudah tertanam, tidak perlu input lagi ──
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxYMADlmitP_-LFQXkM0cSl6mDSovfY3BYfrqC9gdTc6Qv4TannnkvgXTZyYCW70TA_/exec";
+
+let data=[], cfg={}, view='t', cdId=null, cdVal=0;
+
+function loadCfg(){try{cfg=JSON.parse(localStorage.getItem('pdb3')||'{}');}catch{cfg={};} cfg.url=APPS_SCRIPT_URL;}
+function saveCfgLS(){localStorage.setItem('pdb3',JSON.stringify(cfg));}
+
+async function connect(){
+  cfg.interval = parseInt(document.getElementById('sInt').value);
+  const btn = document.getElementById('conBtn');
+  const loadEl = document.getElementById('loadingState');
+  btn.style.display = 'none';
+  loadEl.style.display = 'flex';
+
+  const ok = await fetchData(1);
+  if(ok){
+    saveCfgLS();
+    startApp();
+  } else {
+    btn.style.display = 'flex';
+    loadEl.style.display = 'none';
+  }
+}
+
+function startApp(){
+  document.getElementById('setupScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  setupTimer();
+}
+
+async function fetchData(silent=0){
+  setSS('spin','Memuat...');
+  const url = APPS_SCRIPT_URL + '?_t=' + Date.now();
+  try{
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const json = await res.json();
+    if(!json.ok) throw new Error(json.error||'Gagal baca data');
+    data = json.data.map(r=>({
+      no:String(r.no||''), nama:String(r.nama||''), jenis:String(r.jenis||''),
+      deskripsi:String(r.deskripsi||''), linkSheet:String(r.linkSheet||''),
+      linkWeb:String(r.linkWeb||''), linkApps:String(r.linkApps||''),
+      status:String(r.status||''), tanggal:fmtTgl(r.tanggal), keterangan:String(r.keterangan||'')
+    }));
+    setSS('ok','Tersinkron · '+fmtTime(new Date()));
+    if(!silent) toast('✅ Data diperbarui — '+data.length+' proyek');
+    render(); return true;
+  }catch(e){
+    setSS('err','Gagal');
+    toast('❌ '+e.message,1); return false;
+  }
+}
+
+function fmtTgl(v){
+  if(!v) return '';
+  if(v instanceof Date) return v.toISOString().split('T')[0];
+  const s=String(v);
+  const m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m) return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
+  return s;
+}
+function showTgl(d){
+  if(!d) return '-';
+  try{const[y,m,day]=d.split('-');return day+'/'+m+'/'+y;}catch{return d;}
+}
+function fmtTime(dt){return dt.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});}
+
+function setupTimer(){
+  if(cdId) clearInterval(cdId);
+  const el=document.getElementById('cdc'); el.style.display='none';
+  const s=parseInt(cfg.interval||0); if(s<=0) return;
+  cdVal=s; el.style.display='inline'; el.textContent='↻ '+cdVal+'s';
+  cdId=setInterval(()=>{cdVal--;el.textContent='↻ '+cdVal+'s';if(cdVal<=0){fetchData(1);cdVal=s;}},1000);
+}
+
+function setSS(state,lbl){
+  const d=document.getElementById('syncDot'), l=document.getElementById('syncLbl');
+  if(!d) return;
+  d.className='sd'; if(state==='spin') d.classList.add('spin'); if(state==='err') d.classList.add('err');
+  l.textContent=lbl;
+}
+
+function openCfg(){document.getElementById('cInt').value=cfg.interval||30;document.getElementById('cfgM').classList.add('on');}
+function closeCfg(){document.getElementById('cfgM').classList.remove('on');}
+function saveCfg(){
+  cfg.interval=parseInt(document.getElementById('cInt').value);
+  saveCfgLS(); closeCfg(); setupTimer();
+  toast('✅ Pengaturan disimpan');
+}
+function disconnect(){
+  if(!confirm('Kembali ke halaman awal?')) return;
+  localStorage.removeItem('pdb3'); cfg={url:APPS_SCRIPT_URL}; data=[];
+  if(cdId) clearInterval(cdId); closeCfg();
+  document.getElementById('mainApp').style.display='none';
+  document.getElementById('setupScreen').style.display='flex';
+  document.getElementById('conBtn').style.display='flex';
+  document.getElementById('loadingState').style.display='none';
+}
+
+function getFil(){
+  const q=(document.getElementById('srch')?.value||'').toLowerCase();
+  const fJ=document.getElementById('fJ')?.value||'';
+  const fS=document.getElementById('fS')?.value||'';
+  return data.filter(d=>{
+    const h=!q||[d.nama,d.jenis,d.status,d.deskripsi,d.keterangan].some(v=>v.toLowerCase().includes(q));
+    return h&&(!fJ||d.jenis===fJ)&&(!fS||d.status===fS);
+  });
+}
+function render(){updateStats();const f=getFil();if(view==='t')renderT(f);else renderC(f);}
+function updateStats(){
+  const a=data.filter(d=>d.status==='Aktif').length, m=data.filter(d=>d.status==='Maintenance').length;
+  document.getElementById('statsBar').innerHTML=
+    `<div class="chip"><span class="sdot" style="background:var(--mut)"></span>${data.length} Total</div>`+
+    `<div class="chip"><span class="sdot" style="background:var(--grn)"></span>${a} Aktif</div>`+
+    `<div class="chip"><span class="sdot" style="background:var(--yel)"></span>${m} Maintenance</div>`;
+}
+function tyCls(j){return{'Web App':'bw','Apps Script':'ba','Spreadsheet':'bs'}[j]||'bo';}
+function stCls(s){return{'Aktif':'sa','Maintenance':'sm'}[s]||'sn2';}
+function lb(url,ic,ti){return url?`<a href="${url.replace(/"/g,'&quot;')}" target="_blank" class="lb" title="${ti}">${ic}</a>`:`<span class="lb off">${ic}</span>`;}
+
+function renderT(rows){
+  const tb=document.getElementById('tbody');
+  if(!rows.length){tb.innerHTML=`<tr><td colspan="10"><div class="empty"><div class="ei">${data.length?'🔍':'📭'}</div><p>${data.length?'Tidak cocok filter':'Belum ada data'}</p></div></td></tr>`;return;}
+  tb.innerHTML=rows.map((r,i)=>`<tr>
+    <td class="nc">${r.no||i+1}</td>
+    <td><span class="ns">${r.nama}</span></td>
+    <td><span class="badge ${tyCls(r.jenis)}">${r.jenis||'-'}</span></td>
+    <td style="max-width:175px;font-size:12px;color:var(--mut)">${r.deskripsi||'-'}</td>
+    <td><div class="lc">${lb(r.linkSheet,'🔗','Spreadsheet')}</div></td>
+    <td><div class="lc">${lb(r.linkWeb,'🌐','Web/HTML')}</div></td>
+    <td><div class="lc">${lb(r.linkApps,'⚙️','Script')}</div></td>
+    <td><span class="sbadge ${stCls(r.status)}"><span class="sdsm"></span>${r.status||'-'}</span></td>
+    <td class="dc">${showTgl(r.tanggal)}</td>
+    <td class="kc" title="${r.keterangan||''}">${r.keterangan||'-'}</td>
+  </tr>`).join('');
+}
+function renderC(rows){
+  const g=document.getElementById('cg');
+  if(!rows.length){g.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">📭</div><p>Tidak ada data</p></div>`;return;}
+  g.innerHTML=rows.map((r,i)=>{
+    const lk=[r.linkSheet?`<a href="${r.linkSheet}" target="_blank" class="pcl">🔗 Sheet</a>`:'',r.linkWeb?`<a href="${r.linkWeb}" target="_blank" class="pcl">🌐 Web</a>`:'',r.linkApps?`<a href="${r.linkApps}" target="_blank" class="pcl">⚙️ Script</a>`:''].filter(Boolean).join('')||'<span style="font-size:11px;color:var(--mut)">Tidak ada link</span>';
+    return `<div class="pc"><div class="pct"><span class="pcno">#${r.no||i+1}</span><span class="badge ${tyCls(r.jenis)}">${r.jenis||'-'}</span></div><div class="pcti">${r.nama}</div><div class="pcde">${r.deskripsi||'-'}</div><div class="pcli">${lk}</div><div class="pcfo"><div><span class="sbadge ${stCls(r.status)}"><span class="sdsm"></span>${r.status||'-'}</span><div class="pcda">${showTgl(r.tanggal)}</div></div></div></div>`;
+  }).join('');
+}
+function setView(v){
+  view=v;
+  document.getElementById('tv').style.display=v==='t'?'block':'none';
+  document.getElementById('cg').style.display=v==='c'?'grid':'none';
+  document.getElementById('btnT').classList.toggle('on',v==='t');
+  document.getElementById('btnC').classList.toggle('on',v==='c');
+  render();
+}
+function exportCSV(){
+  const h=['No','Nama','Jenis','Deskripsi','Link Sheet','Link Web','Link Script','Status','Tanggal','Keterangan'];
+  const csv=[h,...data.map(r=>[r.no,r.nama,r.jenis,r.deskripsi,r.linkSheet,r.linkWeb,r.linkApps,r.status,r.tanggal,r.keterangan])].map(r=>r.map(c=>`"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='project-db.csv'; a.click();
+  toast('📥 Exported!');
+}
+function toast(msg,err=0){
+  const t=document.getElementById('toast'); t.textContent=msg; t.className='toast'+(err?' err':'');
+  t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),4000);
+}
+document.getElementById('cfgM').addEventListener('click',e=>{if(e.target===e.currentTarget)closeCfg();});
+
+// INIT - langsung load tanpa perlu input apapun
+loadCfg();
+// Jika sudah pernah connect, langsung masuk app
+if(localStorage.getItem('pdb3')){
+  startApp();
+  fetchData();
+}
+</script>
+</body>
+</html>
